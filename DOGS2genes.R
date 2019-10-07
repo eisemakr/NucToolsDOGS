@@ -103,8 +103,8 @@ transcripts1 <- as.data.frame(cbind(transreg1$chromosome_name,transreg1$transcri
 transreg1$strand <- transreg1$transcription_start_site - size
 
 transreg2 <- subset(transreg,transreg$strand==-1)
-transcripts2 <- as.data.frame(cbind(transreg2$chromosome_name,transreg2$transcription_start_site,
-                                    transreg2$transcription_start_site - transreg2$transcript_length, transreg2$ensembl_transcript_id), 
+transcripts2 <- as.data.frame(cbind(transreg2$chromosome_name, transreg2$transcription_start_site - transreg2$transcript_length, 
+                                    transreg2$transcription_start_site, transreg2$ensembl_transcript_id), 
                               stringsAsFactors = F)
 transreg2$strand <- transreg2$transcription_start_site
 transreg2$transcription_start_site <- transreg2$transcription_start_site + size
@@ -154,8 +154,9 @@ nbDOGS2Genes <- system(paste('bedtools intersect -wo -a ',annoname, ' -b ',datan
                       intern = T)
 nbDOGS2Transcripts <- system(paste('bedtools intersect -wo -a ',transcriptsname , ' -b ',dataname,' | wc -l ', sep = ''),
                        intern = T)
+nbDOGS2exon <- system(paste('bedtools intersect -b ', dataname,' -a ', exonname,' | wc -l ', sep = ''), intern = T)
 
-#receive information from the intersection with the regulatory features file and intersect the DOGS with the exons
+#receive information from the intersection with the regulatory features file 
 
 nbDOGS2Pro <- system('cat DOGS2regs.bed | grep Promoter | grep -v "Promoter Flanking Region" | wc -l ', intern = T)
 nbDOGS2Profl <- system('cat DOGS2regs.bed | grep "Promoter Flanking Region" | wc -l ', intern = T)
@@ -163,11 +164,11 @@ nbDOGS2Enh <- system('cat DOGS2regs.bed | grep "Enhancer" | wc -l ', intern = T)
 nbDOGS2CTCF <- system('cat DOGS2regs.bed | grep "CTCF Binding Site" | wc -l ', intern = T)
 nbDOGS2TF <- system('cat DOGS2regs.bed | grep "TF binding site" | wc -l ', intern = T)
 nbDOGS2OC <- system('cat DOGS2regs.bed | grep "Open chromatin" | wc -l ', intern = T)
-nbDOGS2exon <- system(paste('bedtools intersect -a DOGS2regs.bed -b ', exonname,' | wc -l ', sep = ''), intern = T)
+
 
 #Put the results to a textfile. The textfile will not be overwritten by running the program again. 
 
-txt <- c(paste('number of DOGS', size ,' bases upstream of genes is: ', nbDOGS2Genes, sep = ''),
+txt <- c(paste('number of DOGS ', size ,' bases upstream of genes is: ', nbDOGS2Genes, sep = ''),
   paste('number of DOGS inside annotated promoters is: ', nbDOGS2Pro, sep = ''),
   paste('number of DOGS inside annotated promoter flanking regions is: ', nbDOGS2Profl, sep = ''),
   paste('number of DOGS inside enhancers is: ', nbDOGS2Enh, sep = ''),
