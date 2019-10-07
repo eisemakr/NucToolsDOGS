@@ -42,23 +42,6 @@ if(is.na(args[1])|is.na(args[2])|is.na(args[3])){
 #not implemented -- check if bedtools is installed
 
 #################################################################################
-# 
-# if (missing(args[1])){
-#   print('something wrong with target!')
-#   quit()
-# }
-# 
-# if (missing(args[2])){
-#   print('orga must be mouse or human!')
-#   quit()
-# }
-# 
-# if (is.numeric(args[3])){
-#   
-# } else {
-#   print('size must be a number!')
-#   quit()
-# } 
 
 if (size>2000|size<300){   
   print('size is out of recommended range. Please reconsider your choice!')
