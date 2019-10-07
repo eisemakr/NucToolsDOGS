@@ -191,4 +191,3 @@ print(txt)
 sink()
 
 quit()
-print('Hello World')
