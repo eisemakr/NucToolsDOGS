@@ -126,7 +126,7 @@ data <- read.table(p2data, fill = T)
 data <- data[,1:4]
 data[,1] <- sub('chr', '', data[,1])
 
-annoname <- paste(Sys.Date(), 'upstreamGenAnnotation.bed', size , sep = '')
+annoname <- paste(Sys.Date(), size, 'upstreamGenAnnotation.bed', sep = '')
 transcriptsname <- paste(Sys.Date(), 'GenAnnotation.bed', sep = '')
 regname <- paste(Sys.Date(), 'RegAnnotation.bed', sep = '')
 dataname <- 'DOGSsmallbed.bed'
