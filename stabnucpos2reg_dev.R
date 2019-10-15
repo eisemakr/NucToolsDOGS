@@ -36,7 +36,7 @@ if(is.na(args[1])|is.na(args[2])|is.na(args[3])|is.na(args[4])|is.na(args[5])){
 # g <- 10
 # f <- 0.2
 # out <- 'testdelte.bed'
-# wd <- 'V:/db05/Eike/mirsi/Analysis/stabfuz/First/con0_cas0'
+# wd <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/First/con0_cas0'
 # i <- 21
 
 #################################################################################
@@ -108,6 +108,8 @@ return(positions)
 #################################################################################
 
 files <- list.files(pattern = "txt.gz")
+nms <- sub('.txt.gz','',files)
+#nms <- sub('chr\\d\\d|chr\\d|chrX','',nms)
 print('detected files for follow-up analysis are:')
 print(files)
 
@@ -141,7 +143,7 @@ for (i in 1:length(files)) {
       reg$avrelerr[a] <- mean(subset(datacond,datacond$V2>reg$start[a] & datacond$V2<reg$end[a])$V7)
       reg$sdrelerr[a] <- sd(subset(datacond,datacond$V2>reg$start[a] & datacond$V2<reg$end[a])$V7)
     }
-    reg <- cbind(chr=str_match(files[i],"chr\\d\\d|chr\\d|chrX"),reg)
+    reg <- cbind(chr=str_match(files[i],"chr\\d\\d|chr\\d|chrX"),reg,files[i])
     write.table(reg,file=gzfile(paste(sub(".txt.gz","",files[i]),"_reg",".bed.gz", sep="")), quote = F, col.names = F, sep = '\t', row.names = F )
   }else{
     print('Nothing to be merged. Rare case but happens from time to time.')}
@@ -155,8 +157,9 @@ for (i in 1:length(files)) {
 
 system('zcat *.bed.gz > temp.bed')
 totalbed <- read.table('temp.bed')
-totalbed[,7] <- totalbed[,4] 
+totalbed[,8] <- totalbed[,4] 
 totalbed[,4] <- paste('DOG', 1:nrow(totalbed), sep="")
+totalbed <- totalbed[,c(1,2,3,4,8,5,6,7)]
 
 write.table(totalbed, file = out, quote = F, col.names = F, sep = '\t', row.names = F)
 system('rm temp.bed')

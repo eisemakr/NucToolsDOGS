@@ -50,8 +50,8 @@ if (size>2000|size<300){
 
 wd <- paste(sub('\\/\\w*\\.\\w*', '', p2data, perl=T), sep = '')
 print('Working directory is:')
-print(getwd())
 setwd(wd)
+print(getwd())
 
 
 if (getwd()!= wd) {
@@ -71,7 +71,7 @@ if (orga=='mouse'){
    ensi <- useMart("ENSEMBL_MART_FUNCGEN", dataset = 'mmusculus_regulatory_feature')
    reganno <- getBM(attributes = c('chromosome_name','chromosome_start', 'chromosome_end',"feature_type_name"), mart = ensi)
    #reganno <- reganno[which(reganno$chromosome_name %in% c(1:19, 'X', 'Y')),]# I never tested this but actually it would be useful to cut away everything we don't need
-   
+
 
  }else if (orga=='human'){
    print('get genelist')
@@ -98,14 +98,13 @@ if (orga=='mouse'){
 
 transreg1 <- subset(transreg,transreg$strand==1)
 transcripts1 <- as.data.frame(cbind(transreg1$chromosome_name,transreg1$transcription_start_site,
-                     transreg1$transcription_start_site + transreg1$transcript_length, transreg1$ensembl_transcript_id), 
-                     stringsAsFactors = F)
+                    transreg1$transcription_start_site + transreg1$transcript_length, transreg1$ensembl_transcript_id),
+                    stringsAsFactors = F)
 transreg1$strand <- transreg1$transcription_start_site - size
-
 transreg2 <- subset(transreg,transreg$strand==-1)
-transcripts2 <- as.data.frame(cbind(transreg2$chromosome_name, transreg2$transcription_start_site - transreg2$transcript_length, 
-                                    transreg2$transcription_start_site, transreg2$ensembl_transcript_id), 
-                              stringsAsFactors = F)
+transcripts2 <- as.data.frame(cbind(transreg2$chromosome_name, transreg2$transcription_start_site - transreg2$transcript_length,
+                                 transreg2$transcription_start_site, transreg2$ensembl_transcript_id),
+                             stringsAsFactors = F)
 transreg2$strand <- transreg2$transcription_start_site
 transreg2$transcription_start_site <- transreg2$transcription_start_site + size
 
@@ -125,6 +124,7 @@ transcripts <- transcripts[order(transcripts$V1,transcripts$V2),]
 data <- read.table(p2data, fill = T)
 data <- data[,1:4]
 data[,1] <- sub('chr', '', data[,1])
+
 
 annoname <- paste(Sys.Date(), size, 'upstreamGenAnnotation.bed', sep = '')
 transcriptsname <- paste(Sys.Date(), 'GenAnnotation.bed', sep = '')
