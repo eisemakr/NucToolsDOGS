@@ -53,7 +53,6 @@ print('Working directory is:')
 setwd(wd)
 print(getwd())
 
-
 if (getwd()!= wd) {
   print('working directory could not be set. A regex is used to extract it eigther your path is wrong or my regex bad. Check both pls.')
   quit()
@@ -71,7 +70,6 @@ if (orga=='mouse'){
    ensi <- useMart("ENSEMBL_MART_FUNCGEN", dataset = 'mmusculus_regulatory_feature')
    reganno <- getBM(attributes = c('chromosome_name','chromosome_start', 'chromosome_end',"feature_type_name"), mart = ensi)
    #reganno <- reganno[which(reganno$chromosome_name %in% c(1:19, 'X', 'Y')),]# I never tested this but actually it would be useful to cut away everything we don't need
-
 
  }else if (orga=='human'){
    print('get genelist')
@@ -125,7 +123,6 @@ data <- read.table(p2data, fill = T)
 data <- data[,1:4]
 data[,1] <- sub('chr', '', data[,1])
 
-
 annoname <- paste(Sys.Date(), size, 'upstreamGenAnnotation.bed', sep = '')
 transcriptsname <- paste(Sys.Date(), 'GenAnnotation.bed', sep = '')
 regname <- paste(Sys.Date(), 'RegAnnotation.bed', sep = '')
@@ -164,7 +161,6 @@ nbDOGS2Enh <- system('cat DOGS2regs.bed | grep "Enhancer" | wc -l ', intern = T)
 nbDOGS2CTCF <- system('cat DOGS2regs.bed | grep "CTCF Binding Site" | wc -l ', intern = T)
 nbDOGS2TF <- system('cat DOGS2regs.bed | grep "TF binding site" | wc -l ', intern = T)
 nbDOGS2OC <- system('cat DOGS2regs.bed | grep "Open chromatin" | wc -l ', intern = T)
-
 
 #Put the results to a textfile. The textfile will not be overwritten by running the program again. 
 
