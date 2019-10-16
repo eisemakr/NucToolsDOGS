@@ -1,10 +1,10 @@
 # This script is a complete follow-up of the comp2cond script by Evgeniy. 
 # It takes the output, applies a refiltering for regions which are unoccupied in one condition
 # converts positions into regions and calculates the average <<relative error>> of each region. 
-# For the moment it is not calculating the average relative error because we don't track it back. 
 # We would call regions DOGS. The outputis a gzip .bed-file and will be printed to the same directory. 
 # Take care that the output of comp2cond.pl is sometimes missformatted due to missing chromosome ID. 
-# This script is build to be run with the -wE flag from comp2cond
+# This script is build to be run with the -wE flag from comp2cond. For every DOG the origin file name
+# is reported so its "direction" can be traced back. 
 
 #################################################################################
 
