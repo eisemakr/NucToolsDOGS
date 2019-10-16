@@ -127,7 +127,7 @@ annoname <- paste(Sys.Date(), size, 'upstreamGenAnnotation.bed', sep = '')
 transcriptsname <- paste(Sys.Date(), 'GenAnnotation.bed', sep = '')
 regname <- paste(Sys.Date(), 'RegAnnotation.bed', sep = '')
 dataname <- 'DOGSsmallbed.bed'
-exonname <- 'exonshg19.bed'
+exonname <- 'exons.bed'
 
 write.table(transreg , file = annoname, sep = '\t', quote = F, row.names = F, col.names = F)
 write.table(reganno , file = regname, sep = '\t', quote = F, row.names = F, col.names = F)
