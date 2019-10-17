@@ -20,9 +20,9 @@ wd <- as.character(args[3])   # working directory. A Folder for the results will
 #for development
 #################################################################################
 
-p2datahuman <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/con1_con2/DOGS2dirgene1000.bed'
-p2datamouse <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/cutoff30/DOGS2dirgene1000.bed'
-wd <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/dev'
+#p2datahuman <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/con1_con2/DOGS2dirgene1000.bed'
+#p2datamouse <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/cutoff30/DOGS2dirgene1000.bed'
+#wd <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/dev'
 
 #################################################################################
 
@@ -118,7 +118,8 @@ sink()
 
 quit()
 
-anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t')
+#A Downloaded list of homologous mouse/human genes. It works also by extracting these values
+anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t', header = T)
 
 #This function snippet can later be used to make the join not by downlaoding 2 dataframes and then joining here but
 #directly making a join db statement. Mistakes should then by on the site of ENSEMBL not us. 
@@ -127,45 +128,34 @@ anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t')
        #filters = 'mgi_symbol', values = my.mouse.genes, mart = ensembl.mouse,
        #attributesL = c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position') , martL = ensembl.human)
 
+#The old list of identifierst
+#data <- read.table('X:/db05/Eike/genesmuethe_mirsi.txt', fill = T, sep = '\t')
+#res <- vector(length = nrow(idmouse) )
 
+#Extraction by list ... works fine
+tt <- unique(anno[match(idmouse$mgi_symbol,anno$Symbol),1])
+ttt <- unique(anno[match(idhuman$hgnc_symbol,anno$Symbol),1])
+ttt[match(tt,ttt)]
+anno[which(anno$HomoloGene.ID=='82993'),]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-data <- read.table('X:/db05/Eike/genesmuethe_mirsi.txt', fill = T, sep = '\t')
-
-res <- vector(length = length(data$V3) )
-
-for (i in 1: length(data$V3)){
-  a<-0
-  print(i)
-  a<- grep(data$V3[i],anno$V11)
-  if (is.integer(a)&length(a)!=0){
-  res[i] <- a
-  }}
-
-res1 <- vector(length = length(data$V2) )
-
-for (i in 1: length(data$V2)){
-  a<-0
-  print(i)
-  a<- grep(data$V2[i],anno$V11)
-  if (is.integer(a)&length(a)!=0){
-    res1[i] <- a
-  }}
-x <- anno$V1[res]
-y <- anno$V1[res1]
-y[unique(match(x,y))]
+#This could acctually be deleted
+# for (i in 1: nrow(idmouse)){
+#   a<-0
+#   print(i)
+#   a<- grep(idmouse$mgi_symbol[i],anno$Symbol)
+#   if (is.integer(a)&length(a)!=0){
+#   res[i] <- a
+#   }}
+# 
+# res1 <- vector(length = nrow(idhuman) )
+# 
+# for (i in 1: nrow(idhuman)){
+#   a<-0
+#   print(i)
+#   a<- grep(idhuman[i,5],anno$Symbol)
+#   if (is.integer(a)&length(a)!=0){
+#     res1[i] <- a
+#   }}
+# x <- anno$HomoloGene.ID[res]
+# y <- anno$HomoloGene.ID[res1]
+# y[unique(match(x,y))[-1]]
