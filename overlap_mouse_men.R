@@ -39,38 +39,58 @@ if (getwd()!= wd) {
 datahuman <- read.table(p2datahuman)
 datamouse <- read.table(p2datamouse)
 
+datahuman <- datahuman[order(datahuman$V4),]
+datamouse <- datamouse[order(datamouse$V4),]
+
+
 print('using grch37!!! Change my code if you need the latest human genome.')
+print('when using grch38 for merging of data a getLDS function should be used.')
+print('The code contains already some commented snippets for adjustion.')
+
 ensembl.human = useMart(biomart="ENSEMBL_MART_ENSEMBL",
                         host="grch37.ensembl.org",
                         path="/biomart/martservice",
                         dataset="hsapiens_gene_ensembl")
-idhuman <- getBM(attributes = c('mmusculus_homolog_associated_gene_name', 'mmusculus_homolog_chromosome'), 
+
+#ensembl.human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+ensembl.mouse= useMart("ensembl",dataset="mmusculus_gene_ensembl")
+
+idhumanm <- getBM(attributes = c('mmusculus_homolog_associated_gene_name', 'mmusculus_homolog_chromosome',
+                                 'mmusculus_homolog_chrom_start','mmusculus_homolog_chrom_end',
+                                 'ensembl_transcript_id'), 
                  filters = 'ensembl_transcript_id',
                  values = datahuman$V4,
                  mart = ensembl.human)
-ensembl.mouse= useMart("ensembl",dataset="mmusculus_gene_ensembl")
-idmouse <- getBM(attributes = c('mgi_symbol','chromosome_name','ensembl_transcript_id'), 
+
+idhuman <- getBM(attributes = c('chromosome_name', 'transcript_start','transcript_end',
+                                'ensembl_transcript_id','hgnc_symbol'), 
+                  filters = 'ensembl_transcript_id',
+                  values = datahuman$V4,
+                  mart = ensembl.human)
+idtotalhuman <- cbind(datahuman[,c(1:4)],idhuman,idhumanm)
+
+idmouseh <- getBM(attributes = c('hsapiens_homolog_associated_gene_name', 'hsapiens_homolog_chromosome',
+                                 'hsapiens_homolog_chrom_start','hsapiens_homolog_chrom_end',
+                                 'ensembl_transcript_id'), 
                  filters = 'ensembl_transcript_id',
                  values = datamouse$V4,
                  mart = ensembl.mouse)
+idmouse <- getBM(attributes = c('chromosome_name', 'transcript_start','transcript_end',
+                                'ensembl_transcript_id','mgi_symbol'), 
+                 filters = 'ensembl_transcript_id',
+                 values = datamouse$V4,
+                 mart = ensembl.mouse)
+idtotalmouse <- cbind(datamouse[,c(1:4)],idmouse,idmouseh)
 
-
+resmouse <- merge(idmouse,idhumanm, by.y = 'mmusculus_homolog_associated_gene_name', by.x = 'mgi_symbol')
+resmouse <- resmouse[-which(resmouse$mgi_symbol==''),]
+reshuman <- merge(idhuman,idmouseh, by.y = 'hsapiens_homolog_associated_gene_name', by.x = 'hgnc_symbol')
+reshuman <- reshuman[-which(reshuman$hgnc_symbol==''),]
 
 anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t')
 
-ensembl <- useMart('ensembl')
-ensembl.human <- useMart('ensembl', dataset = 'hsapiens_gene_ensembl')
-ensembl.mouse <- useMart('ensembl', dataset = 'mmusculus_gene_ensembl')
-getBM(attributes = c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),
-      filters = 'hgnc_symbol',
-      values = c('TP53', 'XPC', 'DDB1', 'APEX1'),
-      mart = ensembl.human)
-getBM(attributes = c('mmusculus_homolog_associated_gene_name', 'mmusculus_homolog_chromosome'),
-      filters = 'hgnc_symbol',
-      values = c('E2F3'),
-      mart = ensembl.human)
-my.mouse.genes <- c('Frem2', 'Kmt2d', 'Scn8a', 'Abcg1', 'Acvr1b', 'Flnc', 'Lama2', 'Myh7b', 'Myo10', 'Ryr3')
-getLDS(attributes = c('mgi_symbol', 'chromosome_name'),
+#my.mouse.genes <- c('Frem2', 'Kmt2d', 'Scn8a', 'Abcg1', 'Acvr1b', 'Flnc', 'Lama2', 'Myh7b', 'Myo10', 'Ryr3')
+#getLDS(attributes = c('mgi_symbol', 'chromosome_name'),
        filters = 'mgi_symbol', values = my.mouse.genes, mart = ensembl.mouse,
        attributesL = c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position') , martL = ensembl.human)
 
