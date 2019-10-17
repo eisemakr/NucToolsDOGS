@@ -16,13 +16,15 @@ p2datahuman <- as.character(args[1])   # complete path to human DOGS2dirgene fil
 p2datamouse <- as.character(args[2])   # complete path to mouse DOGS2dirgene file
 wd <- as.character(args[3])   # working directory. A Folder for the results will be created. 
 
+#################################################################################
 #for development
+#################################################################################
 
 p2datahuman <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/con1_con2/DOGS2dirgene1000.bed'
 p2datamouse <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/cutoff30/DOGS2dirgene1000.bed'
 wd <- 'W:/db05/Eike/mirsi/Analysis/stabfuz/Control/dev'
 
-
+#################################################################################
 
 if(is.na(args[1])|is.na(args[2])|is.na(args[3])){
   print('please specify all 3 arguments!')
@@ -36,6 +38,10 @@ if (getwd()!= wd) {
   quit()
 }
 
+#################################################################################
+#read inputs and sort by Ensembl transcript ID 
+#################################################################################
+
 datahuman <- read.table(p2datahuman)
 datamouse <- read.table(p2datamouse)
 
@@ -46,6 +52,10 @@ datamouse <- datamouse[order(datamouse$V4),]
 print('using grch37!!! Change my code if you need the latest human genome.')
 print('when using grch38 for merging of data a getLDS function should be used.')
 print('The code contains already some commented snippets for adjustion.')
+
+#################################################################################
+#Define Mart objects and accessing the corresponding data. 
+#################################################################################
 
 ensembl.human = useMart(biomart="ENSEMBL_MART_ENSEMBL",
                         host="grch37.ensembl.org",
@@ -67,7 +77,8 @@ idhuman <- getBM(attributes = c('chromosome_name', 'transcript_start','transcrip
                   filters = 'ensembl_transcript_id',
                   values = datahuman$V4,
                   mart = ensembl.human)
-idtotalhuman <- cbind(datahuman[,c(1:4)],idhuman,idhumanm)
+#Printing this dataframe should show the consistency of all downloaded data. 
+#idtotalhuman <- cbind(datahuman[,c(1:4)],idhuman,idhumanm)
 
 idmouseh <- getBM(attributes = c('hsapiens_homolog_associated_gene_name', 'hsapiens_homolog_chromosome',
                                  'hsapiens_homolog_chrom_start','hsapiens_homolog_chrom_end',
@@ -80,22 +91,43 @@ idmouse <- getBM(attributes = c('chromosome_name', 'transcript_start','transcrip
                  filters = 'ensembl_transcript_id',
                  values = datamouse$V4,
                  mart = ensembl.mouse)
-idtotalmouse <- cbind(datamouse[,c(1:4)],idmouse,idmouseh)
+#Printing this dataframe should show the consistency of all downloaded data. 
+#idtotalmouse <- cbind(datamouse[,c(1:4)],idmouse,idmouseh)
+
+#################################################################################
+#Merging the data from both sides. 
+#################################################################################
 
 resmouse <- merge(idmouse,idhumanm, by.y = 'mmusculus_homolog_associated_gene_name', by.x = 'mgi_symbol')
 resmouse <- resmouse[-which(resmouse$mgi_symbol==''),]
 reshuman <- merge(idhuman,idmouseh, by.y = 'hsapiens_homolog_associated_gene_name', by.x = 'hgnc_symbol')
 reshuman <- reshuman[-which(reshuman$hgnc_symbol==''),]
 
-anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t')
+#################################################################################
+#Printing the data to a txt file in the working directory. 
+#################################################################################
 
-#my.mouse.genes <- c('Frem2', 'Kmt2d', 'Scn8a', 'Abcg1', 'Acvr1b', 'Flnc', 'Lama2', 'Myh7b', 'Myo10', 'Ryr3')
-#getLDS(attributes = c('mgi_symbol', 'chromosome_name'),
-       filters = 'mgi_symbol', values = my.mouse.genes, mart = ensembl.mouse,
-       attributesL = c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position') , martL = ensembl.human)
-
+sink('Geneoverlap.txt',append = T)
+print(Sys.Date())
+print(Sys.time())
+print('inputs were:')
+print(paste(as.character(args[1]), as.character(args[2]), as.character(args[3])))
+print(resmouse)
+print(reshuman)
+sink()
 
 quit()
+
+anno <- read.table('X:/db05/Eike/mouse_human-txt.txt', fill = T, sep = '\t')
+
+#This function snippet can later be used to make the join not by downlaoding 2 dataframes and then joining here but
+#directly making a join db statement. Mistakes should then by on the site of ENSEMBL not us. 
+#my.mouse.genes <- c('Frem2', 'Kmt2d', 'Scn8a', 'Abcg1', 'Acvr1b', 'Flnc', 'Lama2', 'Myh7b', 'Myo10', 'Ryr3')
+#getLDS(attributes = c('mgi_symbol', 'chromosome_name'),
+       #filters = 'mgi_symbol', values = my.mouse.genes, mart = ensembl.mouse,
+       #attributesL = c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position') , martL = ensembl.human)
+
+
 
 
 
