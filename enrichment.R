@@ -51,5 +51,42 @@ genes <- unique(nms$entrezgene_id)
 genes<- as.character(genes[-1])
 res<-find_enriched_pathway(genes,species='mmu')
 res[[1]][,c(1,5)]
+geneList <- getBM(attributes = c('entrezgene_id'),
+                  #filters = 'ensembl_transcript_id',
+                  #values = data$V4,
+                  mart = ensembl)
+all <- factor(as.integer (geneList$entrezgene_id %in% genes))
+names(all) <- as.vector(geneList$entrezgene_id)
 
+# require(DOSE)
+# require(clusterProfiler)
+# data(geneList)
+# gene = names(geneList)[abs(geneList) > 2]
+#          enrichKEGG(gene = genes,
+#                     organism = "mmu",
+#                     keyType = "kegg",
+#                     pvalueCutoff = 0.01,
+#                     pAdjustMethod = "BH",
+#                     qvalueCutoff = 0.05,
+#                     minGSSize = 5)
 
+#          
+# GO <- enrichGO(gene = genes, 
+#         ont = "BP",
+#         universe = as.character(geneList$entrezgene_id),
+#         OrgDb = org.Mm.eg.db,
+#         pAdjustMethod = "BH",
+#         pvalueCutoff  = 0.01,
+#         qvalueCutoff  = 0.05,
+#         minGSSize = 2
+#         )
+# 
+# summary(GO)
+# 
+# getFnAnot_genome(geneList = genes,
+#                  email = 'eike.krautter@igb.fraunhofer.de',
+#                  idType = "ENTREZ_GENE_ID",
+#                  listName = "auto_list",
+#                  count = 1L,
+#                  PVal = 1,
+#                  getKEGG = FALSE)
