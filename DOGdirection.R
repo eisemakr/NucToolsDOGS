@@ -35,5 +35,11 @@ DOGSlist <- as.character(unique(GENES$V9))
 
 DOGSwGENES <- DOGS[which(DOGS$V4 %in% DOGSlist),]
 
-View(merge(GENES,DOGSwGENES, by.x = 'V9', by.y = 'V4'))
+DOGDIRobject <- merge(GENES,DOGSwGENES, by.x = 'V9', by.y = 'V4', sort = F)
 
+outnm <- sub('.bed','',p2gene)
+outnm <- paste(outnm, '_dir.bed', sep = '')
+
+write.table(DOGDIRobject, outnm,  quote = F, row.names = F, col.names = F)
+
+quit()
